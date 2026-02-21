@@ -9,16 +9,21 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@nestjs/passport": "^11.0.5",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.97.0",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-force-graph-2d": "^1.29.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/passport-jwt": "^4.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
