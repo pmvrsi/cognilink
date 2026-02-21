@@ -1,8 +1,14 @@
 # CogniLink
 
+> **Built for [HackLDN](https://hackldn.org/) - Knowlintery Track**
+
 **Connect your books. Master every topic.**
 
-CogniLink is an AI-powered knowledge management platform that builds conversational knowledge graphs from your resources. Ask anything, summarize instantly, and learn via voice.
+CogniLink is an AI-powered knowledge management platform that builds conversational knowledge graphs from your resources. Ask anything, summarise instantly, and learn via voice.
+
+## Hackathon
+
+This project was created for **HackLDN**, competing in the **Knowlintery** track. CogniLink transforms how students organise and interact with their learning materials by using AI to build visual knowledge graphs from documents.
 
 ## Features
 
@@ -17,6 +23,9 @@ CogniLink is an AI-powered knowledge management platform that builds conversatio
 - **Language**: TypeScript
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **Authentication**: [Supabase Auth](https://supabase.com/auth)
+- **AI**: [Google Gemini](https://ai.google.dev/) (gemini-2.5-flash)
+- **Visualisation**: [react-force-graph-2d](https://github.com/vasturiano/react-force-graph)
+- **Schema Validation**: [Zod](https://zod.dev/)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Font**: Ubuntu Mono
 
@@ -67,10 +76,11 @@ cognilink/
    cp .env.local.example .env.local
    ```
 
-   Then edit `.env.local` with your Supabase credentials:
+   Then edit `.env.local` with your credentials:
    ```
    NEXT_PUBLIC_SUPABASE_URL=your-project-url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   GEMINI_API_KEY=your-gemini-api-key
    ```
 
 4. Configure Supabase:
