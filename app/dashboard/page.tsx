@@ -4,18 +4,18 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
-import { 
-  FileText, 
-  Mic, 
-  Brain, 
-  Search, 
-  Plus, 
-  Upload, 
-  Settings, 
-  LogOut, 
-  ChevronRight, 
-  Terminal, 
-  Cpu, 
+import {
+  FileText,
+  Mic,
+  Brain,
+  Search,
+  Plus,
+  Upload,
+  Settings,
+  LogOut,
+  ChevronRight,
+  Terminal,
+  Cpu,
   Layers,
   Sparkles,
   Command,
@@ -47,7 +47,7 @@ export default function DashboardPage() {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isListening, setIsListening] = useState(false);
-  
+
   const router = useRouter();
   const supabase = createClient();
 
@@ -77,23 +77,46 @@ export default function DashboardPage() {
     router.refresh();
   };
 
-  const handleScan = () => {
+  const handleScan = async () => {
     if (!query) return;
     setIsScanning(true);
-    // Simulate AI Processing
-    setTimeout(() => {
-      setIsScanning(false);
-      setMessages([
-        ...messages,
-        { role: 'user', content: query },
-        { 
-          role: 'ai', 
-          content: `Analyzing "${activeDoc?.name || 'Library'}" for topic: "${query}"... Based on the text, here is the summary: The core principles focus on the interaction of particles at sub-atomic levels. Key citations found on Page 42, 58, and 101.`,
-          citations: ['P.42', 'P.58'] 
-        }
+
+    const userMessage: Message = { role: 'user', content: query };
+    setMessages((prev) => [...prev, userMessage]);
+    setQuery("");
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: query }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessages((prev) => [
+          ...prev,
+          { role: 'ai', content: data.text }
+        ]);
+      } else {
+        console.error('API Error:', data.error);
+        setMessages((prev) => [
+          ...prev,
+          { role: 'ai', content: 'Sorry, I encountered an error while processing your request.' }
+        ]);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setMessages((prev) => [
+        ...prev,
+        { role: 'ai', content: 'Sorry, failed to connect to the server.' }
       ]);
-      setQuery("");
-    }, 1500);
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   const toggleVoice = () => {
@@ -117,9 +140,10 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen bg-[#023047] text-white overflow-hidden" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
-      
+
       {/* Custom Scrollbar Styles */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #219ebc; border-radius: 10px; }
@@ -134,7 +158,7 @@ export default function DashboardPage() {
             </div>
             <span className="text-xl font-bold tracking-tighter">CogniLink</span>
           </Link>
-          
+
           <button className="w-full bg-[#219ebc] hover:bg-[#8ecae6] hover:text-[#023047] py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group shadow-lg shadow-[#219ebc]/10">
             <Plus className="w-4 h-4" /> NEW DOCUMENT
           </button>
@@ -144,9 +168,9 @@ export default function DashboardPage() {
           <div className="px-2 mb-4">
             <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Core Library</span>
           </div>
-          
+
           {documents.map((doc) => (
-            <button 
+            <button
               key={doc.id}
               onClick={() => setActiveDoc(doc)}
               className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all border ${activeDoc?.id === doc.id ? 'bg-[#219ebc]/20 border-[#219ebc]/40 text-[#8ecae6]' : 'hover:bg-white/5 border-transparent text-gray-400 hover:text-white'}`}
@@ -180,7 +204,7 @@ export default function DashboardPage() {
             </div>
             <Settings className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white" />
           </div>
-          <button 
+          <button
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold text-red-400/70 hover:text-red-400 transition-colors"
           >
@@ -211,7 +235,7 @@ export default function DashboardPage() {
 
         {/* Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden p-8 gap-8">
-          
+
           {activeDoc ? (
             <>
               {/* Interaction Panel */}
@@ -265,8 +289,8 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-2 p-2">
                     <div className="flex-1 flex items-center px-4 bg-black/20 rounded-2xl border border-white/5 group focus-within:border-[#219ebc]/50 transition-all">
                       <Search className="w-4 h-4 text-gray-500 mr-3" />
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleScan()}
@@ -274,18 +298,18 @@ export default function DashboardPage() {
                         className="flex-1 bg-transparent py-4 text-sm outline-none placeholder:text-gray-600 font-bold"
                       />
                       <div className="flex items-center gap-2">
-                         <span className="text-[10px] text-gray-500 font-bold bg-white/5 px-2 py-1 rounded">CMD + K</span>
-                         <button 
-                           onClick={handleScan}
-                           disabled={!query || isScanning}
-                           className="w-10 h-10 bg-[#219ebc] rounded-xl flex items-center justify-center text-[#023047] hover:bg-[#8ecae6] transition-all disabled:opacity-30 disabled:grayscale"
-                         >
-                           <ChevronRight className="w-5 h-5" strokeWidth={3} />
-                         </button>
+                        <span className="text-[10px] text-gray-500 font-bold bg-white/5 px-2 py-1 rounded">CMD + K</span>
+                        <button
+                          onClick={handleScan}
+                          disabled={!query || isScanning}
+                          className="w-10 h-10 bg-[#219ebc] rounded-xl flex items-center justify-center text-[#023047] hover:bg-[#8ecae6] transition-all disabled:opacity-30 disabled:grayscale"
+                        >
+                          <ChevronRight className="w-5 h-5" strokeWidth={3} />
+                        </button>
                       </div>
                     </div>
-                    
-                    <button 
+
+                    <button
                       onClick={toggleVoice}
                       className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-xl ${isListening ? 'bg-red-500 shadow-red-500/30' : 'bg-[#023047] border border-white/10 hover:border-[#8ecae6] text-[#8ecae6]'}`}
                     >
@@ -316,21 +340,21 @@ export default function DashboardPage() {
               </div>
               <h2 className="text-4xl font-bold mb-4 tracking-tighter uppercase">Initialize Resource</h2>
               <p className="text-gray-400 max-w-sm mb-12">Select a document from your library or drop a new PDF to start the cognition scan.</p>
-              
+
               <div className="grid grid-cols-2 gap-4 w-full max-w-xl">
-                 <div 
-                   onClick={() => setActiveDoc(documents[0])}
-                   className="p-6 bg-white/5 border border-white/10 rounded-3xl text-left hover:border-[#8ecae6]/40 transition-all cursor-pointer group"
-                 >
-                    <History className="w-6 h-6 text-[#8ecae6] mb-4" />
-                    <div className="text-sm font-bold uppercase mb-1">Resume Last</div>
-                    <div className="text-xs text-gray-500">Quantum_Physics_Ch4</div>
-                 </div>
-                 <div className="p-6 bg-white/5 border border-white/10 rounded-3xl text-left hover:border-[#8ecae6]/40 transition-all cursor-pointer group">
-                    <Command className="w-6 h-6 text-[#8ecae6] mb-4" />
-                    <div className="text-sm font-bold uppercase mb-1">Search Global</div>
-                    <div className="text-xs text-gray-500">Scan across all resources</div>
-                 </div>
+                <div
+                  onClick={() => setActiveDoc(documents[0])}
+                  className="p-6 bg-white/5 border border-white/10 rounded-3xl text-left hover:border-[#8ecae6]/40 transition-all cursor-pointer group"
+                >
+                  <History className="w-6 h-6 text-[#8ecae6] mb-4" />
+                  <div className="text-sm font-bold uppercase mb-1">Resume Last</div>
+                  <div className="text-xs text-gray-500">Quantum_Physics_Ch4</div>
+                </div>
+                <div className="p-6 bg-white/5 border border-white/10 rounded-3xl text-left hover:border-[#8ecae6]/40 transition-all cursor-pointer group">
+                  <Command className="w-6 h-6 text-[#8ecae6] mb-4" />
+                  <div className="text-sm font-bold uppercase mb-1">Search Global</div>
+                  <div className="text-xs text-gray-500">Scan across all resources</div>
+                </div>
               </div>
             </div>
           )}
@@ -339,67 +363,67 @@ export default function DashboardPage() {
 
       {/* Right Intelligence Panel - Metadata & Statistics */}
       <aside className="w-72 border-l border-white/5 bg-white/[0.01] hidden xl:flex flex-col">
-         <div className="p-8 border-b border-white/5">
-            <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mb-6">Sys_Analytics</h5>
-            <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-[10px] font-bold uppercase mb-2">
-                    <span className="text-gray-500">Tokens Processed</span>
-                    <span className="text-[#8ecae6]">84.2k</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#8ecae6] w-3/4"></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-[10px] font-bold uppercase mb-2">
-                    <span className="text-gray-500">Extraction Confidence</span>
-                    <span className="text-[#8ecae6]">98.4%</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#8ecae6] w-5/6"></div>
-                  </div>
-                </div>
-            </div>
-         </div>
-
-         <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
-            <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mb-6">Detected_Topics</h5>
-            <div className="flex flex-wrap gap-2">
-              {['Particle Physics', 'Heisenberg', 'Electron Shells', 'Nuclear Force', 'Entropy', 'Calculus'].map(topic => (
-                <button key={topic} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-tight hover:border-[#8ecae6] hover:text-[#8ecae6] transition-all">
-                  {topic}
-                </button>
-              ))}
-            </div>
-
-            <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mt-12 mb-6">Hotkeys</h5>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-[10px] font-bold">
-                <span className="text-gray-500">NEW_QUERY</span>
-                <span className="bg-white/5 px-2 py-1 rounded">ALT + Q</span>
+        <div className="p-8 border-b border-white/5">
+          <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mb-6">Sys_Analytics</h5>
+          <div className="space-y-6">
+            <div>
+              <div className="flex justify-between text-[10px] font-bold uppercase mb-2">
+                <span className="text-gray-500">Tokens Processed</span>
+                <span className="text-[#8ecae6]">84.2k</span>
               </div>
-              <div className="flex justify-between items-center text-[10px] font-bold">
-                <span className="text-gray-500">VOICE_TRIGGER</span>
-                <span className="bg-white/5 px-2 py-1 rounded">SPACEBAR</span>
-              </div>
-              <div className="flex justify-between items-center text-[10px] font-bold">
-                <span className="text-gray-500">EXPORT_SUMMARY</span>
-                <span className="bg-white/5 px-2 py-1 rounded">CMD + E</span>
+              <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-[#8ecae6] w-3/4"></div>
               </div>
             </div>
-         </div>
-
-         <div className="p-8 bg-white/5 border-t border-white/5">
-            <div className="p-4 bg-[#219ebc]/10 rounded-2xl border border-[#219ebc]/20">
-               <div className="flex items-center gap-2 mb-2">
-                 <Sparkles className="w-4 h-4 text-[#8ecae6]" />
-                 <span className="text-[10px] font-bold text-[#8ecae6] uppercase tracking-widest">Pro Version</span>
-               </div>
-               <p className="text-[10px] font-medium text-gray-400 mb-4 leading-relaxed">Unlock unlimited scanning and advanced mathematical OCR.</p>
-               <button className="w-full bg-[#219ebc] py-2 rounded-xl text-[10px] font-bold text-[#023047] uppercase hover:bg-[#8ecae6] transition-all">Upgrade Now</button>
+            <div>
+              <div className="flex justify-between text-[10px] font-bold uppercase mb-2">
+                <span className="text-gray-500">Extraction Confidence</span>
+                <span className="text-[#8ecae6]">98.4%</span>
+              </div>
+              <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-[#8ecae6] w-5/6"></div>
+              </div>
             </div>
-         </div>
+          </div>
+        </div>
+
+        <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
+          <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mb-6">Detected_Topics</h5>
+          <div className="flex flex-wrap gap-2">
+            {['Particle Physics', 'Heisenberg', 'Electron Shells', 'Nuclear Force', 'Entropy', 'Calculus'].map(topic => (
+              <button key={topic} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-tight hover:border-[#8ecae6] hover:text-[#8ecae6] transition-all">
+                {topic}
+              </button>
+            ))}
+          </div>
+
+          <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mt-12 mb-6">Hotkeys</h5>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center text-[10px] font-bold">
+              <span className="text-gray-500">NEW_QUERY</span>
+              <span className="bg-white/5 px-2 py-1 rounded">ALT + Q</span>
+            </div>
+            <div className="flex justify-between items-center text-[10px] font-bold">
+              <span className="text-gray-500">VOICE_TRIGGER</span>
+              <span className="bg-white/5 px-2 py-1 rounded">SPACEBAR</span>
+            </div>
+            <div className="flex justify-between items-center text-[10px] font-bold">
+              <span className="text-gray-500">EXPORT_SUMMARY</span>
+              <span className="bg-white/5 px-2 py-1 rounded">CMD + E</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-8 bg-white/5 border-t border-white/5">
+          <div className="p-4 bg-[#219ebc]/10 rounded-2xl border border-[#219ebc]/20">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-4 h-4 text-[#8ecae6]" />
+              <span className="text-[10px] font-bold text-[#8ecae6] uppercase tracking-widest">Pro Version</span>
+            </div>
+            <p className="text-[10px] font-medium text-gray-400 mb-4 leading-relaxed">Unlock unlimited scanning and advanced mathematical OCR.</p>
+            <button className="w-full bg-[#219ebc] py-2 rounded-xl text-[10px] font-bold text-[#023047] uppercase hover:bg-[#8ecae6] transition-all">Upgrade Now</button>
+          </div>
+        </div>
       </aside>
 
     </div>
