@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
@@ -48,15 +48,18 @@ export default function DashboardPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isListening, setIsListening] = useState(false);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const router = useRouter();
   const supabase = createClient();
 
   // Mock data for the documents
-  const documents: Document[] = [
+  const [documents, setDocuments] = useState<Document[]>([
     { id: 1, name: "Quantum_Physics_Ch4.pdf", size: "12.4 MB", date: "2024-03-15", status: "Analyzed" },
     { id: 2, name: "Molecular_Biology_Final.pdf", size: "8.1 MB", date: "2024-03-14", status: "Analyzed" },
     { id: 3, name: "History_WW2_Economics.pdf", size: "15.9 MB", date: "2024-03-10", status: "Partial" },
-  ];
+  ]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -75,6 +78,68 @@ export default function DashboardPage() {
     await supabase.auth.signOut();
     router.push('/');
     router.refresh();
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const newDoc: Document = {
+      id: Date.now(),
+      name: file.name,
+      size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+      date: new Date().toISOString().split('T')[0],
+      status: "Uploading..."
+    };
+
+    setDocuments(prev => [newDoc, ...prev]);
+    setActiveDoc(newDoc);
+    setMessages([{ role: 'ai', content: `Uploading and analyzing ${file.name}... Please wait.` }]);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setDocuments(prev => prev.map(d =>
+          d.id === newDoc.id ? { ...d, status: 'Analyzed' } : d
+        ));
+
+        setMessages([
+          { role: 'ai', content: `I have analyzed "${data.filename}". Here is the summary:\n\n${data.summary}` }
+        ]);
+      } else {
+        console.error('API Error:', data.error);
+        setDocuments(prev => prev.map(d =>
+          d.id === newDoc.id ? { ...d, status: 'Failed' } : d
+        ));
+        setMessages([
+          { role: 'ai', content: `Sorry, I encountered an error: ${data.error}` }
+        ]);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setDocuments(prev => prev.map(d =>
+        d.id === newDoc.id ? { ...d, status: 'Failed' } : d
+      ));
+      setMessages([
+        { role: 'ai', content: 'Sorry, failed to connect to the server.' }
+      ]);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleScan = async () => {
@@ -334,9 +399,23 @@ export default function DashboardPage() {
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center">
-              <div className="w-32 h-32 bg-[#219ebc]/10 rounded-[40px] border border-[#219ebc]/20 flex items-center justify-center mb-10 group cursor-pointer hover:bg-[#219ebc]/20 transition-all overflow-hidden relative">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept="application/pdf"
+                className="hidden"
+              />
+              <div
+                onClick={() => !isUploading && fileInputRef.current?.click()}
+                className={`w-32 h-32 bg-[#219ebc]/10 rounded-[40px] border border-[#219ebc]/20 flex items-center justify-center mb-10 group cursor-pointer hover:bg-[#219ebc]/20 transition-all overflow-hidden relative ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              >
                 <div className="absolute inset-0 border-2 border-dashed border-[#219ebc]/40 m-2 rounded-[32px]"></div>
-                <Upload className="w-10 h-10 text-[#219ebc] group-hover:scale-110 transition-transform" />
+                {isUploading ? (
+                  <Loader2 className="w-10 h-10 text-[#219ebc] animate-spin" />
+                ) : (
+                  <Upload className="w-10 h-10 text-[#219ebc] group-hover:scale-110 transition-transform" />
+                )}
               </div>
               <h2 className="text-4xl font-bold mb-4 tracking-tighter uppercase">Initialize Resource</h2>
               <p className="text-gray-400 max-w-sm mb-12">Select a document from your library or drop a new PDF to start the cognition scan.</p>
