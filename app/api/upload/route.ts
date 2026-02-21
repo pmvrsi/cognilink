@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Ask Gemini to summarize the provided document
+        // Ask Gemini to summarise the provided document
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: [
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
                 systemInstruction: `You are an expert AI assistant inside the 'CogniLink' document analysis platform.
                 Your goals:
                 1. Provide highly professional, concise, and accurate summaries of the provided academic documents.
-                2. Do not summarize or process documents containing inappropriate, offensive, or harmful topics; instead return a polite refusal.`,
+                2. Do not summarise or process documents containing inappropriate, offensive, or harmful topics; instead return a polite refusal.`,
             }
         });
 
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error('Upload API Error:', error);
         return NextResponse.json(
-            { error: 'Failed to analyze document' },
+            { error: 'Failed to analyse document' },
             { status: 500 }
         );
     }

@@ -173,7 +173,7 @@ export default function HomePage() {
             Your books <br /> are waiting.
           </h2>
           <button className="bg-white text-[#023047] px-12 py-6 rounded-full font-black text-xl hover:bg-[#8ecae6] transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] active:scale-95">
-            INITIALIZE FREE TRIAL
+            INITIALISE FREE TRIAL
           </button>
           <p className="mt-8 text-gray-500 font-bold tracking-widest text-xs">
             LIMIT: 5 DOCUMENTS / SESSION

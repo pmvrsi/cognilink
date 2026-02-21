@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Link as LinkIcon } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import './globals.css';
@@ -47,10 +47,8 @@ export default function RootLayout({
                     : 'bg-transparent border-transparent'
                 }`}
               >
-                <Link href="/" className="flex items-center gap-2 cursor-pointer group">
-                  <div className="w-8 h-8 bg-[#8ecae6] rounded-lg flex items-center justify-center transition-all group-hover:scale-110 shadow-[0_0_15px_rgba(142,202,230,0.3)]">
-                    <LinkIcon className="w-4 h-4 text-[#023047]" strokeWidth={3} />
-                  </div>
+                <Link href="/" className="flex items-center gap-3 cursor-pointer group">
+                  <Image src="/MainLogo.png" alt="CogniLink" width={48} height={48} className="drop-shadow-lg transition-all group-hover:scale-110" />
                   <span className="text-xl font-bold tracking-tight">CogniLink</span>
                 </Link>
 
@@ -75,10 +73,8 @@ export default function RootLayout({
           <footer className="py-20 px-6 border-t border-white/5">
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
               <div>
-                <Link href="/" className="flex items-center gap-2 mb-6">
-                  <div className="w-8 h-8 bg-[#8ecae6] rounded-lg flex items-center justify-center">
-                    <LinkIcon className="w-4 h-4 text-[#023047]" strokeWidth={3} />
-                  </div>
+                <Link href="/" className="flex items-center gap-3 mb-6">
+                  <Image src="/MainLogo.png" alt="CogniLink" width={48} height={48} className="drop-shadow-lg" />
                   <span className="text-xl font-bold tracking-tight">CogniLink</span>
                 </Link>
                 <p className="text-gray-500 max-w-xs uppercase text-xs font-bold leading-relaxed">

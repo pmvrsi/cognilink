@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
@@ -15,8 +16,6 @@ import {
   LogOut,
   ChevronRight,
   Terminal,
-  Cpu,
-  Layers,
   Sparkles,
   Command,
   History,
@@ -96,7 +95,7 @@ export default function DashboardPage() {
 
     setDocuments(prev => [newDoc, ...prev]);
     setActiveDoc(newDoc);
-    setMessages([{ role: 'ai', content: `Uploading and analyzing ${file.name}... Please wait.` }]);
+    setMessages([{ role: 'ai', content: `Uploading and analysing ${file.name}... Please wait.` }]);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -115,7 +114,7 @@ export default function DashboardPage() {
         ));
 
         setMessages([
-          { role: 'ai', content: `I have analyzed "${data.filename}". Here is the summary:\n\n${data.summary}` }
+          { role: 'ai', content: `I have analysed "${data.filename}". Here is the summary:\n\n${data.summary}` }
         ]);
       } else {
         console.error('API Error:', data.error);
@@ -217,13 +216,6 @@ export default function DashboardPage() {
       {/* Sidebar - Navigation & Library */}
       <aside className="w-80 border-r border-white/5 bg-white/[0.02] flex flex-col">
         <div className="p-6 border-b border-white/5">
-          <Link href="/" className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-[#8ecae6] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(142,202,230,0.3)]">
-              <Layers className="w-5 h-5 text-[#023047]" />
-            </div>
-            <span className="text-xl font-bold tracking-tighter">CogniLink</span>
-          </Link>
-
           <button className="w-full bg-[#219ebc] hover:bg-[#8ecae6] hover:text-[#023047] py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 group shadow-lg shadow-[#219ebc]/10">
             <Plus className="w-4 h-4" /> NEW DOCUMENT
           </button>
@@ -282,16 +274,11 @@ export default function DashboardPage() {
       <main className="flex-1 flex flex-col relative bg-[#023047]">
         {/* Header */}
         <header className="h-16 border-b border-white/5 px-8 flex items-center justify-between bg-white/[0.01] backdrop-blur-md z-10">
-          <div className="flex items-center gap-4">
-            <Cpu className="w-4 h-4 text-[#8ecae6]" />
-            <span className="text-xs font-bold tracking-[0.3em] uppercase text-white/50">
-              {activeDoc ? `processing_module // ${activeDoc.name}` : 'standing_by // select resource'}
-            </span>
-          </div>
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/MainLogo.png" alt="CogniLink" width={40} height={40} className="drop-shadow-lg" />
+            <span className="text-xl font-bold tracking-tighter">CogniLink</span>
+          </Link>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-[10px] font-bold text-white/40 border border-white/10 px-3 py-1 rounded-full uppercase">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> Neural Engine Active
-            </div>
             <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/10">
               <MoreVertical className="w-4 h-4" />
             </div>
@@ -417,7 +404,7 @@ export default function DashboardPage() {
                   <Upload className="w-10 h-10 text-[#219ebc] group-hover:scale-110 transition-transform" />
                 )}
               </div>
-              <h2 className="text-4xl font-bold mb-4 tracking-tighter uppercase">Initialize Resource</h2>
+              <h2 className="text-4xl font-bold mb-4 tracking-tighter uppercase">Initialise Resource</h2>
               <p className="text-gray-400 max-w-sm mb-12">Select a document from your library or drop a new PDF to start the cognition scan.</p>
 
               <div className="grid grid-cols-2 gap-4 w-full max-w-xl">
@@ -440,67 +427,30 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Right Intelligence Panel - Metadata & Statistics */}
+      {/* Right Panel - Graph */}
       <aside className="w-72 border-l border-white/5 bg-white/[0.01] hidden xl:flex flex-col">
-        <div className="p-8 border-b border-white/5">
-          <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mb-6">Sys_Analytics</h5>
-          <div className="space-y-6">
-            <div>
-              <div className="flex justify-between text-[10px] font-bold uppercase mb-2">
-                <span className="text-gray-500">Tokens Processed</span>
-                <span className="text-[#8ecae6]">84.2k</span>
-              </div>
-              <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-[#8ecae6] w-3/4"></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-[10px] font-bold uppercase mb-2">
-                <span className="text-gray-500">Extraction Confidence</span>
-                <span className="text-[#8ecae6]">98.4%</span>
-              </div>
-              <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-[#8ecae6] w-5/6"></div>
-              </div>
-            </div>
-          </div>
+        <div className="p-6 border-b border-white/5">
+          <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mb-4">Graph</h5>
         </div>
 
-        <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
-          <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mb-6">Detected_Topics</h5>
-          <div className="flex flex-wrap gap-2">
-            {['Particle Physics', 'Heisenberg', 'Electron Shells', 'Nuclear Force', 'Entropy', 'Calculus'].map(topic => (
-              <button key={topic} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-tight hover:border-[#8ecae6] hover:text-[#8ecae6] transition-all">
-                {topic}
-              </button>
-            ))}
-          </div>
-
-          <h5 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] mt-12 mb-6">Hotkeys</h5>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="text-gray-500">NEW_QUERY</span>
-              <span className="bg-white/5 px-2 py-1 rounded">ALT + Q</span>
-            </div>
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="text-gray-500">VOICE_TRIGGER</span>
-              <span className="bg-white/5 px-2 py-1 rounded">SPACEBAR</span>
-            </div>
-            <div className="flex justify-between items-center text-[10px] font-bold">
-              <span className="text-gray-500">EXPORT_SUMMARY</span>
-              <span className="bg-white/5 px-2 py-1 rounded">CMD + E</span>
+        <div className="flex-1 p-6 overflow-y-auto custom-scrollbar flex flex-col">
+          {/* Graph visualisation placeholder */}
+          <div className="flex-1 bg-white/5 rounded-2xl border border-white/10 mb-6 flex items-center justify-center min-h-[200px]">
+            <div className="text-center opacity-30">
+              <Sparkles className="w-8 h-8 mx-auto mb-2 text-[#8ecae6]" />
+              <p className="text-[10px] font-bold uppercase tracking-widest">Knowledge Graph</p>
             </div>
           </div>
-        </div>
 
-        <div className="p-8 bg-white/5 border-t border-white/5">
-          <div className="p-4 bg-[#219ebc]/10 rounded-2xl border border-[#219ebc]/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-4 h-4 text-[#8ecae6]" />
-              <span className="text-[10px] font-bold text-[#8ecae6] uppercase tracking-widest">Pro Version</span>
-            </div>
-            <p className="text-[10px] font-medium text-gray-400 mb-4 leading-relaxed">Unlock unlimited scanning and advanced mathematical OCR.</p>
-            <button className="w-full bg-[#219ebc] py-2 rounded-xl text-[10px] font-bold text-[#023047] uppercase hover:bg-[#8ecae6] transition-all">Upgrade Now</button>
+          {/* Prompt input */}
+          <div className="mt-auto">
+            <textarea
+              placeholder="Enter prompt for graph..."
+              className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm outline-none placeholder:text-gray-600 font-bold resize-none h-24 focus:border-[#219ebc]/50 transition-all"
+            />
+            <button className="w-full mt-3 bg-[#219ebc] hover:bg-[#8ecae6] hover:text-[#023047] py-2.5 rounded-xl font-bold text-xs transition-all uppercase tracking-wider">
+              Generate Graph
+            </button>
           </div>
         </div>
       </aside>
