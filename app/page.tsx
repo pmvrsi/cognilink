@@ -23,7 +23,7 @@ export default function HomePage() {
 
           <p className="max-w-xl mx-auto text-lg md:text-xl text-gray-400 mb-12 leading-relaxed">
             [system_scan]: CogniLink builds a conversational knowledge graph from your resources.
-            Ask anything, summarize instantly, and learn via voice.
+            Ask anything, summarise instantly, and learn via voice.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-24">

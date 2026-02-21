@@ -56,8 +56,8 @@ export default function DashboardPage() {
 
   // Mock data for the documents
   const [documents, setDocuments] = useState<Document[]>([
-    { id: 1, name: "Quantum_Physics_Ch4.pdf", size: "12.4 MB", date: "2024-03-15", status: "Analyzed" },
-    { id: 2, name: "Molecular_Biology_Final.pdf", size: "8.1 MB", date: "2024-03-14", status: "Analyzed" },
+    { id: 1, name: "Quantum_Physics_Ch4.pdf", size: "12.4 MB", date: "2024-03-15", status: "Analysed" },
+    { id: 2, name: "Molecular_Biology_Final.pdf", size: "8.1 MB", date: "2024-03-14", status: "Analysed" },
     { id: 3, name: "History_WW2_Economics.pdf", size: "15.9 MB", date: "2024-03-10", status: "Partial" },
   ]);
 
@@ -111,7 +111,7 @@ export default function DashboardPage() {
 
       if (res.ok) {
         setDocuments(prev => prev.map(d =>
-          d.id === newDoc.id ? { ...d, status: 'Analyzed' } : d
+          d.id === newDoc.id ? { ...d, status: 'Analysed' } : d
         ));
 
         setMessages([
