@@ -17,8 +17,8 @@ export default function HomePage() {
       <section className="relative pt-48 pb-32 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-6xl md:text-[80px] font-bold mb-8 tracking-tighter leading-[1] text-white">
-            Connect your books. <br />
-            <span className="text-[#8ecae6]">Master every topic.</span>
+            Link your Learning, <br />
+            <span className="text-[#8ecae6]">Connect your cognition.</span>
           </h1>
 
           <p className="max-w-xl mx-auto text-lg md:text-xl text-gray-400 mb-12 leading-relaxed">
