@@ -1,0 +1,46 @@
+COMP1117 Computer Programming
+2023-24
+Instructor(s):	Chim T W
+Ting HF
+(Class A)	No. of credit(s):	6
+Choi Loretta
+Ting HF
+(Class B)
+Recommended Learning Hours:	
+Lecture:	32.5
+Lab session:	6.5
+Pre-requisite(s):	 
+Co-requisite(s):	 
+Mutually exclusive with:	ENGG1111 or ENGG1330 or IIMT2602
+Remarks:	
+
+Course Learning Outcomes
+1.	[Computational mind]
+ Able to identify possible solutions for problems based on computer programs.
+2.	[Program implementation]
+ Able to implement solutions for problems using Python
+3.	[Program comprehension]
+ Able to understand programs written by others and participate in larger scale system implementation.
+Mapping from Course Learning Outcomes to Programme Learning Outcomes
+ 	PLO a	PLO b	PLO c	PLO d	PLO e	PLO f	PLO g	PLO h	PLO i	PLO j
+CLO 1	T		T							T
+CLO 2	T		T							T
+CLO 3	T		T		T					T
+T - Teach, P - Practice
+For BEng(CompSc) Programme Learning Outcomes, please refer to here.
+
+Syllabus
+Calendar Entry:
+This is an introductory course in computer programming. Students will acquire basic Python programming skills, including syntax, identifiers, control statements, functions, recursions, strings, lists, dictionaries, tuples and files. Searching and sorting algorithms, such as sequential search, binary search, bubble sort, insertion sort and selection sort, will also be covered.
+
+Detailed Description:
+
+Features of high-level programming languages	Mapped to CLOs
+Syntax, identifiers, control statements, functions, recursions, and strings	1, 2
+Techniques for writing well-structured programs	Mapped to CLOs
+Programming style, program documentation	3
+Program design techniques	Mapped to CLOs
+Lists, dictionaries, tuples and files	1, 2
+Assessment:
+Continuous Assessment: 50%
+Written Examination: 50%
