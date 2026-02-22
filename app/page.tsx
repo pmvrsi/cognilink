@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import {
   FileText,
   Mic,
@@ -6,8 +7,8 @@ import {
   Search,
   ArrowRight,
   Layers,
-  Zap,
-  CheckCircle2,
+  Flame,
+  Users,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -39,7 +40,36 @@ export default function HomePage() {
 
         {/* Visual Product Card */}
         <div className="max-w-6xl mx-auto px-4">
-          <div className="rounded-[40px] bg-white/5 border border-white/10 p-4 backdrop-blur-3xl overflow-hidden shadow-2xl">
+          <div className="relative group pb-24">
+            {/* Floating Icons Behind - positioned below card */}
+            <div className="absolute inset-x-0 bottom-0 h-48 pointer-events-none">
+              {/* Icon 1 - GoodNotes */}
+              <div className="absolute left-[5%] bottom-0 translate-y-[100%] group-hover:translate-y-[20%] transition-all duration-1000 ease-out opacity-0 group-hover:opacity-80">
+                <Image src="/fixedicons/goodnotes.png" alt="" width={80} height={80} className="drop-shadow-2xl" />
+              </div>
+              {/* Icon 2 - Notes */}
+              <div className="absolute left-[20%] bottom-0 translate-y-[100%] group-hover:translate-y-[-10%] transition-all duration-[1200ms] ease-out delay-100 opacity-0 group-hover:opacity-70">
+                <Image src="/fixedicons/notes.png" alt="" width={88} height={88} className="drop-shadow-2xl" />
+              </div>
+              {/* Icon 3 - PDF */}
+              <div className="absolute left-[38%] bottom-0 translate-y-[100%] group-hover:translate-y-[30%] transition-all duration-1000 ease-out delay-200 opacity-0 group-hover:opacity-75">
+                <Image src="/fixedicons/pdf.png" alt="" width={72} height={72} className="drop-shadow-2xl" />
+              </div>
+              {/* Icon 4 - Word */}
+              <div className="absolute right-[35%] bottom-0 translate-y-[100%] group-hover:translate-y-[-20%] transition-all duration-[1100ms] ease-out delay-150 opacity-0 group-hover:opacity-65">
+                <Image src="/fixedicons/word.png" alt="" width={80} height={80} className="drop-shadow-2xl" />
+              </div>
+              {/* Icon 5 - iOS */}
+              <div className="absolute right-[18%] bottom-0 translate-y-[100%] group-hover:translate-y-[15%] transition-all duration-[900ms] ease-out delay-75 opacity-0 group-hover:opacity-80">
+                <Image src="/fixedicons/ios.png" alt="" width={64} height={64} className="drop-shadow-2xl" />
+              </div>
+              {/* Icon 6 - macOS */}
+              <div className="absolute right-[3%] bottom-0 translate-y-[100%] group-hover:translate-y-[25%] transition-all duration-[1300ms] ease-out delay-[250ms] opacity-0 group-hover:opacity-60">
+                <Image src="/fixedicons/macos.png" alt="" width={96} height={96} className="drop-shadow-2xl" />
+              </div>
+            </div>
+            
+            <div className="rounded-[40px] bg-white/5 border border-white/10 p-4 backdrop-blur-3xl overflow-hidden shadow-2xl relative z-10 transition-transform duration-500 group-hover:translate-y-[-8px] group-hover:shadow-[0_30px_60px_-15px_rgba(142,202,230,0.15)]">
             <div className="bg-[#023047] rounded-[32px] border border-white/5 aspect-[16/8] flex">
               <div className="w-1/4 border-r border-white/5 p-6 hidden lg:block">
                 <div className="w-full h-8 bg-white/5 rounded-lg mb-8"></div>
@@ -79,6 +109,17 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Used by students at */}
+        <div className="max-w-4xl mx-auto mt-16 text-center">
+          <p className="text-gray-500 text-sm uppercase tracking-widest mb-8">Used by students at</p>
+          <div className="flex items-center justify-center gap-12 flex-wrap">
+            <span className="text-white/60 text-xl font-semibold tracking-wide hover:text-white transition-colors">Durham</span>
+            <span className="text-white/30">•</span>
+            <span className="text-white/60 text-xl font-semibold tracking-wide hover:text-white transition-colors">KCL</span>
           </div>
         </div>
       </section>
@@ -111,14 +152,13 @@ export default function HomePage() {
             <div className="bg-[#219ebc] rounded-[40px] p-10 flex flex-col justify-between group cursor-pointer hover:shadow-2xl transition-all">
               <div>
                 <div className="w-12 h-12 bg-[#023047]/20 rounded-2xl flex items-center justify-center mb-6">
-                  <Mic className="w-6 h-6 text-[#023047]" />
+                  <Brain className="w-6 h-6 text-[#023047]" />
                 </div>
                 <h3 className="text-3xl font-bold mb-4 tracking-tight text-[#023047] uppercase">
-                  02 // Voice Q&A
+                  02 // Knowledge Graphs
                 </h3>
                 <p className="text-[#023047]/70 font-bold">
-                  [VOICE_MODE]: Speak to your library. Ask follow-up questions hands-free while you
-                  move.
+                  [GRAPH_MODE]: Expand your learning into interconnected visual graphs. See how topics relate, discover hidden connections, and navigate complex subjects with ease.
                 </p>
               </div>
               <div className="flex justify-end">
@@ -131,11 +171,11 @@ export default function HomePage() {
             {/* Feature 3: Small Card */}
             <div className="bg-white/5 border border-white/10 rounded-[40px] p-10 hover:border-[#8ecae6]/30 transition-all">
               <div className="w-12 h-12 bg-[#8ecae6]/20 rounded-2xl flex items-center justify-center mb-6">
-                <Zap className="w-6 h-6 text-[#8ecae6]" />
+                <Flame className="w-6 h-6 text-[#8ecae6]" />
               </div>
-              <h3 className="text-2xl font-bold mb-2 tracking-tight uppercase">03 // OCR Engine</h3>
+              <h3 className="text-2xl font-bold mb-2 tracking-tight uppercase">03 // Login Streaks</h3>
               <p className="text-gray-400">
-                High-speed character recognition for handwritten notes and old textbooks.
+                Build consistent learning habits with daily streaks and achievement tracking.
               </p>
             </div>
 
@@ -143,41 +183,25 @@ export default function HomePage() {
             <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-[40px] p-10 flex flex-col md:flex-row items-center gap-10 overflow-hidden group">
               <div className="flex-1">
                 <div className="w-12 h-12 bg-[#8ecae6]/20 rounded-2xl flex items-center justify-center mb-6">
-                  <CheckCircle2 className="w-6 h-6 text-[#8ecae6]" />
+                  <Users className="w-6 h-6 text-[#8ecae6]" />
                 </div>
                 <h3 className="text-3xl font-bold mb-4 tracking-tight uppercase">
-                  04 // Verification
+                  04 // Friends
                 </h3>
                 <p className="text-gray-400 text-lg leading-relaxed">
-                  Every claim is cited. Direct links to the original page in your PDF ensure no
-                  hallucinated data.
+                  Share graphs and topics with friends for interactive learning together.
                 </p>
               </div>
               <div className="w-full md:w-64 h-48 bg-white/5 rounded-2xl border border-white/10 group-hover:scale-105 transition-transform flex items-center justify-center p-6">
                 <div className="w-full space-y-3 font-bold">
                   <div className="h-1 w-full bg-[#8ecae6]/30 rounded"></div>
                   <div className="h-1 w-5/6 bg-white/10 rounded"></div>
-                  <div className="text-[10px] text-[#8ecae6] pt-4">REF: PAGE_42_PARA_1</div>
+                  <div className="text-[10px] text-[#8ecae6] pt-4">SHARED WITH 3 FRIENDS</div>
                 </div>
               </div>
             </div>
 
           </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-48 px-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-bold mb-10 tracking-tighter uppercase leading-none">
-            Your books <br /> are waiting.
-          </h2>
-          <button className="bg-white text-[#023047] px-12 py-6 rounded-full font-black text-xl hover:bg-[#8ecae6] transition-all shadow-[0_0_50px_rgba(255,255,255,0.1)] active:scale-95">
-            INITIALISE FREE TRIAL
-          </button>
-          <p className="mt-8 text-gray-500 font-bold tracking-widest text-xs">
-            LIMIT: 5 DOCUMENTS / SESSION
-          </p>
         </div>
       </section>
     </>
