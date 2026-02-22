@@ -8,7 +8,7 @@ import { User } from '@supabase/supabase-js';
 import {
   FileText, Mic, Brain, Search, Plus, Upload,
   Settings, LogOut, ChevronRight, Terminal, Sparkles,
-  Command, History, MoreVertical, Loader2, Share2, Check, Network
+  Command, History, Loader2, Share2, Check, Network
 } from 'lucide-react';
 import Link from 'next/link';
 import NoSSRForceGraph, { adjacencyMatrixToGraphData, type ForceGraphData } from '@/lib/NoSSRForceGraph';
@@ -631,9 +631,6 @@ export default function DashboardPage() {
                 >
                   ← Back to Chat
                 </button>
-                <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/10">
-                  <MoreVertical className="w-4 h-4" />
-                </div>
               </div>
             </header>
 
@@ -780,9 +777,6 @@ export default function DashboardPage() {
                 <Image src="/MainLogo.png" alt="CogniLink" width={40} height={40} className="drop-shadow-lg" />
                 <span className="text-xl font-bold tracking-tighter">CogniLink</span>
               </Link>
-              <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/10">
-                <MoreVertical className="w-4 h-4" />
-              </div>
             </header>
 
             <div className="flex-1 flex flex-col overflow-hidden p-8 gap-8">
@@ -973,7 +967,7 @@ function SettingsMenu({ open, onClose, user, onLogout }: { open: boolean; onClos
       <div className="bg-[#023047] border border-[#219ebc]/20 rounded-3xl p-8 w-[400px] shadow-2xl shadow-[#219ebc]/10">
         <div className="flex items-center gap-4 mb-8">
           <div className="w-12 h-12 bg-[#219ebc]/20 rounded-xl flex items-center justify-center border border-[#219ebc]/30">
-            <MoreVertical className="w-6 h-6 text-[#8ecae6]" />
+            <Settings className="w-6 h-6 text-[#8ecae6]" />
           </div>
           <div>
             <h3 className="text-white font-bold text-lg">Settings</h3>
