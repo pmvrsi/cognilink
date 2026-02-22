@@ -364,16 +364,14 @@ export default function DashboardPage() {
     setQuery('');
 
     try {
-      const res  = await fetch('/api/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          question: query,
-          labels:          graphData?.labels,
-          label_summary:   graphData?.label_summary,
-          adjacencyMatrix: graphData?.adjacencyMatrix,
-        }),
-      });
+      const fd = new FormData();
+      fd.append('question', query);
+      if (graphData?.labels)          fd.append('labels',          JSON.stringify(graphData.labels));
+      if (graphData?.label_summary)   fd.append('label_summary',   JSON.stringify(graphData.label_summary));
+      if (graphData?.adjacencyMatrix) fd.append('adjacencyMatrix', JSON.stringify(graphData.adjacencyMatrix));
+      if (activeFile)                 fd.append('files', activeFile);
+
+      const res  = await fetch('/api/ask', { method: 'POST', body: fd });
       const data = await res.json() as { answer?: string; error?: string };
 
       setMessages(prev => [...prev, {
