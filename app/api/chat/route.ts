@@ -6,46 +6,49 @@ const ADJ_MATRIX_SCHEMA = {
   properties: {
     n: {
       type: "integer",
-      description: "Number of topics"
+      description: "Exact number of topics. Must equal labels.length."
     },
     labels: {
       type: "array",
       items: { type: "string" },
-      description: "1xN array of topic names"
+      description: "Array of n topic names. Length must equal n."
     },
     adjacencyMatrix: {
       type: "array",
       items: {
         type: "array",
-        items: { type: "integer" }
+        items: {
+          type: "integer",
+          enum: [0, 1]
+        }
       },
-      description: "NxN adjacency matrix. adjacencyMatrix[i][j] = 1 means topic i is a prerequisite for topic j."
+      description: "n×n matrix of 0s and 1s. adjacencyMatrix[i][j]=1 means topic i is a prerequisite for topic j. No bidirectional entries (i.e. if [i][j]=1 then [j][i] must be 0)."
     }
   },
   required: ["n", "labels", "adjacencyMatrix"]
 };
 
 const SYSTEM_PROMPT = `
-Key role of the agent: An Agent that helps to organise the students' learning materials into graphs (outputted as an adjacency matrix).
-Key instructions: You are given the syllabus and learning materials of a student's course. Try to extract the key topics that the student could learn, and how one topic leads to another (represent them as an arrow), and what topics between the lectures are related (represent them as a double arrow).
+You are an AI agent that organises student learning materials into a knowledge graph represented as an adjacency matrix.
 
-Output strictly in the following format, following the json schema:
-int n: the number of topics in the syllabus
-array label: a 1xn string array which lists the labels (i.e. the topic name)
-adjacencymatrix: n by n integer adjacency matrix between the topics
+Given a syllabus or set of lecture slides, extract the key topics and identify ONLY prerequisite relationships between them (i.e. topic A must be learned before topic B).
 
+Rules:
+- Only encode prerequisite relationships. Do NOT encode bidirectional "related" links.
+- adjacencyMatrix[i][j] = 1 means topic i is a prerequisite for topic j.
+- adjacencyMatrix[i][j] = 0 otherwise.
+- The matrix must be strictly n×n where n = labels.length.
+- The matrix must have no entry where both [i][j]=1 and [j][i]=1 (no cycles).
 
-For example,
-A document mentions 4 key topics, A, B, C, D. A is pre-requisite of B, and B is pre-requisite to C and D. A and D are related in terms of application.
+Example: 4 topics A, B, C, D. A is a prerequisite of B. B is a prerequisite of C and D.
+Output:
+{
+  "n": 4,
+  "labels": ["A", "B", "C", "D"],
+  "adjacencyMatrix": [[0,1,0,0],[0,0,1,1],[0,0,0,0],[0,0,0,0]]
+}
 
-Example output:
-Label: [A, B, C, D]
-Adjacency matrix:
-[[0,1,0,1],[0,0,1,1],[0,0,0,0],[1,0,0,0]]
-
-Explanation:
-A and D points to each other, meaning that it is doubling connected (i.e. related)
-A is singly connected to B, so it is a pre-requisite of B
+You MUST output valid JSON matching the schema exactly. Do not include any explanation outside the JSON.
 `;
 
 export async function POST(req: Request) {
@@ -71,11 +74,15 @@ export async function POST(req: Request) {
           config: { mimeType: file.type, displayName: file.name },
         });
 
-        if (!uploaded.uri || !uploaded.mimeType) {
+        // The SDK returns the file metadata at the top level (uri, mimeType)
+        const uri      = uploaded.uri      ?? (uploaded as any).file?.uri;
+        const mimeType = uploaded.mimeType ?? (uploaded as any).file?.mimeType;
+
+        if (!uri || !mimeType) {
           throw new Error(`Failed to upload file: ${file.name}`);
         }
 
-        return createPartFromUri(uploaded.uri, uploaded.mimeType);
+        return createPartFromUri(uri, mimeType);
       })
     );
 
