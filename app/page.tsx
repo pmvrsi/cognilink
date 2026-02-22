@@ -51,16 +51,6 @@ export default function HomePage() {
               className="opacity-60 hover:opacity-100 transition-opacity brightness-0 invert"
             />
             <span className="text-white/30">•</span>
-            <div className="relative w-[140px] h-[40px]">
-              <Image
-                src="/University of Hong Kong Logo.png"
-                alt="University of Hong Kong"
-                fill
-                className="object-contain opacity-60 hover:opacity-100 transition-opacity brightness-0 invert rounded-xl"
-                style={{ WebkitMaskImage: 'linear-gradient(white, white)', maskImage: 'linear-gradient(white, white)' }}
-              />
-            </div>
-            <span className="text-white/30">•</span>
             <Image
               src="/Queen Mary Logo Blue.png"
               alt="Queen Mary University of London"
