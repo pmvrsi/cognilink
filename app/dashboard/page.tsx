@@ -608,7 +608,15 @@ export default function DashboardPage() {
               className={`group w-full flex items-center gap-3 p-3 rounded-xl transition-all border ${activeDoc?.id === doc.id ? 'bg-[#219ebc]/20 border-[#219ebc]/40 text-[#8ecae6]' : 'hover:bg-white/5 border-transparent text-gray-400 hover:text-white'}`}
             >
               <button
-                onClick={() => setActiveDoc(doc)}
+                onClick={() => {
+                  if (activeDoc?.id !== doc.id) {
+                    setGraphData(null);
+                    setMessages([]);
+                    setShareUrl(null);
+                    setSelectedNodeIndex(null);
+                  }
+                  setActiveDoc(doc);
+                }}
                 className="flex items-center gap-3 flex-1 min-w-0 text-left"
               >
                 <FileText className="w-4 h-4 flex-shrink-0" />
