@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import NoSSRForceGraph, { adjacencyMatrixToGraphData, type ForceGraphData } from '@/lib/NoSSRForceGraph';
+import { Flame, Zap, TrendingUp } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,7 +37,187 @@ interface GraphData {
   adjacencyMatrix: number[][];
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// ─── Streak Widget ──────────────────────────────────────────────────────────
+interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastLoginDate: string | null;
+  loginDates: string[];
+}
+
+function StreakWidget({ userId }: { userId: string | null }) {
+  const [streakData, setStreakData] = useState<StreakData>({
+    currentStreak: 0,
+    longestStreak: 0,
+    lastLoginDate: null,
+    loginDates: [],
+  });
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+
+  const getLast7Days = () => {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      days.push({
+        date: date.toISOString().split('T')[0],
+        label: date.toLocaleDateString('en-GB', { weekday: 'short' }).charAt(0),
+        fullLabel: date.toLocaleDateString('en-GB', { weekday: 'short' }),
+      });
+    }
+    return days;
+  };
+  const last7Days = getLast7Days();
+
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    const recordLoginAndFetchStreak = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      await supabase
+        .from('login_streaks')
+        .upsert(
+          { user_id: userId, login_date: today },
+          { onConflict: 'user_id,login_date' }
+        );
+      const { data: logins, error } = await supabase
+        .from('login_streaks')
+        .select('login_date')
+        .eq('user_id', userId)
+        .order('login_date', { ascending: false });
+      if (error) {
+        setLoading(false);
+        return;
+      }
+      const loginDates = logins?.map((l) => l.login_date) || [];
+      let currentStreak = 0;
+      let checkDate = new Date();
+      for (let i = 0; i < 365; i++) {
+        const dateStr = checkDate.toISOString().split('T')[0];
+        if (loginDates.includes(dateStr)) {
+          currentStreak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else if (i === 0) {
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      let longestStreak = 0;
+      let tempStreak = 0;
+      const sortedDates = [...loginDates].sort();
+      for (let i = 0; i < sortedDates.length; i++) {
+        if (i === 0) {
+          tempStreak = 1;
+        } else {
+          const prev = new Date(sortedDates[i - 1]);
+          const curr = new Date(sortedDates[i]);
+          const diffDays = Math.floor((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            tempStreak++;
+          } else {
+            tempStreak = 1;
+          }
+        }
+        longestStreak = Math.max(longestStreak, tempStreak);
+      }
+      setStreakData({
+        currentStreak,
+        longestStreak,
+        lastLoginDate: loginDates[0] || null,
+        loginDates,
+      });
+      setLoading(false);
+    };
+    recordLoginAndFetchStreak();
+  }, [userId, supabase]);
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-br from-[#0d1117] to-[#161b22] border border-[#8ecae6]/20 rounded-2xl p-6 w-full animate-pulse mb-6">
+        <div className="h-6 bg-white/10 rounded w-1/2 mb-4"></div>
+        <div className="h-16 bg-white/10 rounded w-1/3 mb-6"></div>
+        <div className="flex justify-between">
+          {[...Array(7)].map((_, i) => (
+            <div key={i} className="w-8 h-8 bg-white/10 rounded-xl"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gradient-to-br from-[#0d1117] to-[#161b22] border border-[#8ecae6]/20 rounded-2xl p-6 w-full shadow-lg shadow-[#8ecae6]/5 mb-6">
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-10 h-10 bg-gradient-to-br from-[#8ecae6]/30 to-[#8ecae6]/10 rounded-xl flex items-center justify-center border border-[#8ecae6]/30">
+          <Flame className="w-5 h-5 text-[#8ecae6]" />
+        </div>
+        <div>
+          <h3 className="text-white font-bold text-base">Login Streak</h3>
+          <p className="text-[#8ecae6]/60 text-xs">Keep the momentum!</p>
+        </div>
+      </div>
+      <div className="flex items-end gap-2 mb-4">
+        <span className="text-4xl font-bold text-white tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontVariantNumeric: 'tabular-nums' }}>{streakData.currentStreak}</span>
+        <span className="text-[#8ecae6]/80 text-base font-medium pb-2">days</span>
+        {streakData.currentStreak > 0 && (
+          <div className="w-8 h-8 bg-[#8ecae6]/20 rounded-xl flex items-center justify-center animate-pulse ml-auto">
+            <Zap className="w-4 h-4 text-[#8ecae6]" />
+          </div>
+        )}
+      </div>
+      <div className="mb-4">
+        <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Last 7 Days</p>
+        <div className="flex justify-between gap-1">
+          {last7Days.map((day, index) => {
+            const isActive = streakData.loginDates.includes(day.date);
+            const isToday = day.date === new Date().toISOString().split('T')[0];
+            return (
+              <div key={index} className="flex flex-col items-center gap-1">
+                <div
+                  className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                    isActive
+                      ? 'bg-gradient-to-br from-[#8ecae6]/40 to-[#8ecae6]/20 border border-[#8ecae6]/50 shadow-lg shadow-[#8ecae6]/20'
+                      : 'bg-white/5 border border-white/10 hover:border-white/20'
+                  } ${isToday ? 'ring-2 ring-[#8ecae6]/30 ring-offset-2 ring-offset-[#0d1117]' : ''}`}
+                >
+                  {isActive && <Flame className="w-4 h-4 text-[#8ecae6]" />}
+                </div>
+                <span className={`text-xs font-medium ${isToday ? 'text-[#8ecae6]' : 'text-gray-500'}`}>{day.fullLabel}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="bg-white/5 rounded-xl p-2 border border-white/10">
+          <div className="flex items-center gap-1 mb-1">
+            <Flame className="w-3 h-3 text-[#8ecae6]/60" />
+            <p className="text-gray-500 text-xs uppercase tracking-wide">Current</p>
+          </div>
+          <p className="text-white font-bold text-lg" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>{streakData.currentStreak} <span className="text-gray-500 text-xs font-normal">days</span></p>
+        </div>
+        <div className="bg-white/5 rounded-xl p-2 border border-white/10">
+          <div className="flex items-center gap-1 mb-1">
+            <TrendingUp className="w-3 h-3 text-[#8ecae6]/60" />
+            <p className="text-gray-500 text-xs uppercase tracking-wide">Best</p>
+          </div>
+          <p className="text-white font-bold text-lg" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>{streakData.longestStreak} <span className="text-gray-500 text-xs font-normal">days</span></p>
+        </div>
+      </div>
+      {streakData.currentStreak === 0 && (
+        <div className="mt-4 p-2 bg-[#8ecae6]/10 rounded-xl border border-[#8ecae6]/20">
+          <p className="text-[#8ecae6] text-xs text-center">Start your streak today! Log in daily to build momentum 🚀</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const [user, setUser]           = useState<User | null>(null);
@@ -283,6 +464,8 @@ export default function DashboardPage() {
           <div className="px-2 mb-4">
             <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Core Library</span>
           </div>
+          {/* Streak Widget */}
+          <StreakWidget userId={user?.id ?? null} />
           {documents.map(doc => (
             <button
               key={doc.id}
