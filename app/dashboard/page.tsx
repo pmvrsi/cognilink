@@ -589,11 +589,22 @@ export default function DashboardPage() {
 
         <div className="p-4 border-t border-white/5 bg-black/20">
           <div className="flex items-center gap-3 mb-4 p-2">
-            <div className="w-10 h-10 rounded-full bg-[#219ebc]/30 border border-[#219ebc]/50 flex items-center justify-center">
-              <Terminal className="w-5 h-5 text-[#8ecae6]" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-bold truncate">{user?.email?.split('@')[0] || 'User'}</div>
+            {user?.user_metadata?.avatar_url ? (
+              <img
+                src={user.user_metadata.avatar_url}
+                alt="Profile"
+                className="w-10 h-10 rounded-full object-cover border border-[#219ebc]/50"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-[#219ebc]/30 border border-[#219ebc]/50 flex items-center justify-center">
+                <Terminal className="w-5 h-5 text-[#8ecae6]" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-bold truncate">
+                {user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}
+              </div>
             </div>
             <Settings className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white" onClick={() => setSettingsOpen(true)} />
           </div>
