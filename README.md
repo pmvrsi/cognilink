@@ -3,7 +3,7 @@
 > **Built for [HackLDN 2026](https://hackldn.org/) — Knowlintery Track**
 > Made by Paramveer, Nabil, Sam and Isaac
 
-**Link your learning. Connect your cognition.**
+**Link your Learning. Connect your Cognition.**
 
 CogniLink is an AI-powered knowledge management platform that builds visual, interactive knowledge graphs from your documents. Upload a PDF, extract topics, and explore how concepts interconnect — then ask questions, track your learning streak, and share graphs with friends.
 
