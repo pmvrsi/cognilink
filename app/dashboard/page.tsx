@@ -38,6 +38,13 @@ interface GraphData {
   adjacencyMatrix: number[][];
 }
 
+// Per-document workspace (graph + chat + share URL)
+interface DocState {
+  graphData: GraphData | null;
+  messages: Message[];
+  shareUrl: string | null;
+}
+
 // ─── Streak Widget ──────────────────────────────────────────────────────────
 interface StreakData {
   currentStreak: number;
@@ -223,7 +230,6 @@ export default function DashboardPage() {
   const [user, setUser]           = useState<User | null>(null);
   const [loading, setLoading]     = useState(true);
   const [activeDoc, setActiveDoc] = useState<Doc | null>(null);
-  const [messages, setMessages]   = useState<Message[]>([]);
   const [query, setQuery]         = useState('');
   const [isScanning, setIsScanning]   = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -235,20 +241,45 @@ export default function DashboardPage() {
   const [isUploading, setIsUploading]   = useState(false);
   const [uploadStatus, setUploadStatus] = useState('');
 
-  // Graph
-  const [graphData, setGraphData]               = useState<GraphData | null>(null);
+  // Per-doc workspace state (graph + messages + shareUrl keyed by doc id)
+  const [docStates, setDocStates] = useState<Record<number, DocState>>({});
+
+  // Graph UI — ephemeral, not stored per-doc
   const [graphPrompt, setGraphPrompt]           = useState('');
   const [isGeneratingGraph, setIsGeneratingGraph] = useState(false);
   const [selectedNodeIndex, setSelectedNodeIndex] = useState<number | null>(null);
   const [isSharing, setIsSharing]                 = useState(false);
   const [shareCopied, setShareCopied]             = useState(false);
-  const [shareUrl, setShareUrl]                   = useState<string | null>(null);
   const [renderLinkOpen, setRenderLinkOpen]       = useState(false);
   const [renderLinkInput, setRenderLinkInput]     = useState('');
   const [isRenderingLink, setIsRenderingLink]     = useState(false);
   const [renderLinkError, setRenderLinkError]     = useState('');
 
   const [documents, setDocuments] = useState<Doc[]>([]);
+
+  // ── Derived per-doc values ─────────────────────────────────────────────────
+  const _empty: DocState = { graphData: null, messages: [], shareUrl: null };
+  const _cur   = activeDoc ? (docStates[activeDoc.id] ?? _empty) : _empty;
+  const graphData = _cur.graphData;
+  const messages  = _cur.messages;
+  const shareUrl  = _cur.shareUrl;
+
+  // ── Per-doc setters ────────────────────────────────────────────────────────
+  const setGraphData = (data: GraphData | null) => {
+    if (!activeDoc) return;
+    setDocStates(prev => ({ ...prev, [activeDoc.id]: { ...(prev[activeDoc.id] ?? _empty), graphData: data } }));
+  };
+  const setMessages = (updater: Message[] | ((prev: Message[]) => Message[])) => {
+    if (!activeDoc) return;
+    setDocStates(prev => {
+      const cur = prev[activeDoc.id] ?? _empty;
+      return { ...prev, [activeDoc.id]: { ...cur, messages: typeof updater === 'function' ? updater(cur.messages) : updater } };
+    });
+  };
+  const setShareUrl = (url: string | null) => {
+    if (!activeDoc) return;
+    setDocStates(prev => ({ ...prev, [activeDoc.id]: { ...(prev[activeDoc.id] ?? _empty), shareUrl: url } }));
+  };
 
   const router   = useRouter();
   const supabase = createClient();
@@ -269,8 +300,8 @@ export default function DashboardPage() {
     try {
       const saved = localStorage.getItem('cl_session');
       if (!saved) return;
-      const { graphData: gd, documents: docs, messages: msgs, shareUrl: su, activeDocId } = JSON.parse(saved);
-      if (gd) setGraphData(gd);
+      const { docStates: ds, documents: docs, activeDocId } = JSON.parse(saved);
+      if (ds) setDocStates(ds);
       if (docs?.length) {
         setDocuments(docs);
         if (activeDocId) {
@@ -278,8 +309,6 @@ export default function DashboardPage() {
           if (found) setActiveDoc(found);
         }
       }
-      if (msgs?.length) setMessages(msgs);
-      if (su) setShareUrl(su);
     } catch {}
   }, []);
 
@@ -287,14 +316,12 @@ export default function DashboardPage() {
   useEffect(() => {
     try {
       localStorage.setItem('cl_session', JSON.stringify({
-        graphData,
+        docStates,
         documents,
-        messages,
-        shareUrl,
         activeDocId: activeDoc?.id ?? null,
       }));
     } catch {}
-  }, [graphData, documents, messages, shareUrl, activeDoc]);
+  }, [docStates, documents, activeDoc]);
 
   const handleLogout = async () => {
     localStorage.removeItem('cl_session');
@@ -334,19 +361,19 @@ export default function DashboardPage() {
 
       if (res.ok && data.n && data.labels && data.adjacencyMatrix) {
         setDocuments(prev => prev.map(d => d.id === newDoc.id ? { ...d, status: 'Analysed' } : d));
-        setGraphData(data);
+        setDocStates(prev => ({ ...prev, [newDoc.id]: {
+          graphData: data,
+          messages: [{ role: 'ai', content: `Analysed "${file.name}". Extracted ${data.n} topics: ${data.labels.join(', ')}. Knowledge graph is live in the left panel.` }],
+          shareUrl: null,
+        }}));
         setSelectedNodeIndex(null);
-        setMessages([{
-          role: 'ai',
-          content: `Analysed "${file.name}". Extracted ${data.n} topics: ${data.labels.join(', ')}. Knowledge graph is live in the left panel.`,
-        }]);
       } else {
         setDocuments(prev => prev.map(d => d.id === newDoc.id ? { ...d, status: 'Failed' } : d));
-        setMessages([{ role: 'ai', content: `Error: ${JSON.stringify(data)}` }]);
+        setDocStates(prev => ({ ...prev, [newDoc.id]: { graphData: null, messages: [{ role: 'ai', content: `Error: ${JSON.stringify(data)}` }], shareUrl: null } }));
       }
     } catch {
       setDocuments(prev => prev.map(d => d.id === newDoc.id ? { ...d, status: 'Failed' } : d));
-      setMessages([{ role: 'ai', content: 'Could not reach the server.' }]);
+      setDocStates(prev => ({ ...prev, [newDoc.id]: { graphData: null, messages: [{ role: 'ai', content: 'Could not reach the server.' }], shareUrl: null } }));
     } finally {
       setIsUploading(false);
       setUploadStatus('');
@@ -609,13 +636,8 @@ export default function DashboardPage() {
             >
               <button
                 onClick={() => {
-                  if (activeDoc?.id !== doc.id) {
-                    setGraphData(null);
-                    setMessages([]);
-                    setShareUrl(null);
-                    setSelectedNodeIndex(null);
-                  }
                   setActiveDoc(doc);
+                  setSelectedNodeIndex(null);
                 }}
                 className="flex items-center gap-3 flex-1 min-w-0 text-left"
               >
@@ -629,11 +651,8 @@ export default function DashboardPage() {
                 onClick={e => {
                   e.stopPropagation();
                   setDocuments(prev => prev.filter(d => d.id !== doc.id));
-                  if (activeDoc?.id === doc.id) {
-                    setActiveDoc(null);
-                    setGraphData(null);
-                    setMessages([]);
-                  }
+                  setDocStates(prev => { const { [doc.id]: _, ...rest } = prev; return rest; });
+                  if (activeDoc?.id === doc.id) setActiveDoc(null);
                 }}
                 className="opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 flex items-center justify-center rounded-md hover:bg-red-500/20 text-gray-500 hover:text-red-400 flex-shrink-0"
                 aria-label="Remove document"
