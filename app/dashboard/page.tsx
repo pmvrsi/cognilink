@@ -403,6 +403,46 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen bg-[#023047] text-white overflow-hidden animate-fade-in" style={{ fontFamily: "'Ubuntu Mono', monospace" }}>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #219ebc; border-radius: 10px; }
+        @keyframes scan {
+          0%   { width: 0%;  margin-left: 0%; }
+          50%  { width: 60%; margin-left: 20%; }
+          100% { width: 0%;  margin-left: 100%; }
+        }
+        .scan-bar { animation: scan 1.5s ease-in-out infinite; }
+      ` }} />
+
+      {/* ── Full-screen upload loading overlay ───────────────────────────── */}
+      {isUploading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#023047]/95 backdrop-blur-md">
+          {/* Pulsing rings */}
+          <div className="relative flex items-center justify-center mb-10">
+            <div className="absolute w-44 h-44 rounded-full border border-[#219ebc]/15 animate-ping" style={{ animationDuration: '2s' }} />
+            <div className="absolute w-36 h-36 rounded-full border border-[#219ebc]/25 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.35s' }} />
+            <div className="absolute w-28 h-28 rounded-full border border-[#219ebc]/35 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.7s' }} />
+            <div className="w-20 h-20 rounded-full bg-[#219ebc]/10 border border-[#219ebc]/50 flex items-center justify-center">
+              <Loader2 className="w-9 h-9 text-[#8ecae6] animate-spin" />
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white mb-3">
+            Processing Document
+          </h2>
+          <p className="text-sm text-[#8ecae6] font-bold max-w-xs text-center tracking-wide opacity-80">
+            {uploadStatus}
+          </p>
+
+          {/* Scanning progress bar */}
+          <div className="mt-8 w-64 h-0.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="scan-bar h-full bg-[#219ebc] rounded-full" />
+          </div>
+        </div>
+      )}
+
       {/* Sidebar with slide-in animation */}
       <aside className="w-80 border-r border-white/5 bg-white/[0.02] flex flex-col animate-slide-in" style={{ animationDelay: '0.1s' }}>
         <div className="p-6 border-b border-white/5">
