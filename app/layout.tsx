@@ -97,7 +97,7 @@ export default function RootLayout({
                   </svg>
                 </a>
                 <a
-                  href="https://www.instagram.com"
+                  href="https://www.instagram.com/hackldn/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
