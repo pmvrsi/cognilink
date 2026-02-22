@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   FileText,
   Mic,
@@ -27,14 +28,14 @@ export default function HomePage() {
             Ask anything, summarise instantly, and learn via voice.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-24">
-            <button className="w-full sm:w-auto bg-[#219ebc] hover:bg-[#8ecae6] hover:text-[#023047] px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-xl shadow-[#219ebc]/20 group">
-              Start Scanning{' '}
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="w-full sm:w-auto bg-white/5 border border-white/10 hover:bg-white/10 px-8 py-4 rounded-full font-bold text-lg transition-all backdrop-blur-md">
-              View Demo
-            </button>
+          <div className="flex justify-center items-center mb-24">
+            <Link 
+              href="/login"
+              className="bg-[#8ecae6] text-[#023047] px-10 py-4 rounded-full font-bold text-lg transition-all flex items-center gap-2 hover:bg-white hover:shadow-lg hover:shadow-[#8ecae6]/20 active:scale-95"
+            >
+              Branch your Files
+              <ArrowRight className="w-5 h-5" />
+            </Link>
           </div>
         </div>
 
@@ -117,9 +118,31 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto mt-16 text-center">
           <p className="text-gray-500 text-sm uppercase tracking-widest mb-8">Used by students at</p>
           <div className="flex items-center justify-center gap-12 flex-wrap">
-            <span className="text-white/60 text-xl font-semibold tracking-wide hover:text-white transition-colors">Durham</span>
+            <Image 
+              src="/Durham University Logo.png" 
+              alt="Durham University" 
+              width={140} 
+              height={40} 
+              className="opacity-60 hover:opacity-100 transition-opacity brightness-0 invert"
+            />
             <span className="text-white/30">•</span>
-            <span className="text-white/60 text-xl font-semibold tracking-wide hover:text-white transition-colors">KCL</span>
+            <div className="relative w-[140px] h-[40px]">
+              <Image 
+                src="/Kings College London Logo.png" 
+                alt="King's College London" 
+                fill
+                className="object-contain opacity-60 hover:opacity-100 transition-opacity brightness-0 invert rounded-xl" 
+                style={{ WebkitMaskImage: 'linear-gradient(white, white)', maskImage: 'linear-gradient(white, white)' }}
+              />
+            </div>
+            <span className="text-white/30">•</span>
+            <Image 
+              src="/Queen Mary Logo Blue.png" 
+              alt="Queen Mary University of London" 
+              width={140} 
+              height={40} 
+              className="opacity-60 hover:opacity-100 transition-opacity brightness-0 invert"
+            />
           </div>
         </div>
       </section>

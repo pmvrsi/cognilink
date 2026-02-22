@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { Link as LinkIcon, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
@@ -52,10 +53,14 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <Link href="/" className="flex items-center justify-center gap-2 mb-12 group">
-          <div className="w-10 h-10 bg-[#8ecae6] rounded-xl flex items-center justify-center transition-all group-hover:scale-110 shadow-[0_0_20px_rgba(142,202,230,0.4)]">
-            <LinkIcon className="w-5 h-5 text-[#023047]" strokeWidth={3} />
-          </div>
+        <Link href="/" className="flex items-center justify-center gap-3 mb-12 group">
+          <Image 
+            src="/MainLogo.png" 
+            alt="CogniLink" 
+            width={48} 
+            height={48} 
+            className="transition-all group-hover:scale-110"
+          />
           <span className="text-2xl font-bold tracking-tight">CogniLink</span>
         </Link>
 
