@@ -53,7 +53,10 @@ export default function RootLayout({
                 </Link>
 
                 <div className="flex items-center gap-4">
-                  <Link href="/login" className="text-sm font-bold text-gray-300 hover:text-white hidden sm:block">
+                  <Link
+                    href="/login"
+                    className="text-sm font-bold px-5 py-2 rounded-full border border-white/20 text-gray-300 hover:text-white hover:border-white/50 hover:bg-white/5 transition-all hidden sm:block"
+                  >
                     Log in
                   </Link>
                 </div>
