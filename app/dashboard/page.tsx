@@ -577,19 +577,7 @@ export default function DashboardPage() {
                     <Upload className="w-4 h-4" /> Upload Document
                   </button>
                   <div className="grid grid-cols-2 gap-4 w-full max-w-xl">
-                    <div
-                      onClick={() => documents[0] && setActiveDoc(documents[0])}
-                      className="p-6 bg-white/5 border border-white/10 rounded-3xl text-left hover:border-[#8ecae6]/40 transition-all cursor-pointer"
-                    >
-                      <History className="w-6 h-6 text-[#8ecae6] mb-4" />
-                      <div className="text-sm font-bold uppercase mb-1">Resume Last</div>
-                      <div className="text-xs text-gray-500">{documents[0]?.name.replace('.pdf', '') ?? '—'}</div>
-                    </div>
-                    <div className="p-6 bg-white/5 border border-white/10 rounded-3xl text-left hover:border-[#8ecae6]/40 transition-all cursor-pointer">
-                      <Command className="w-6 h-6 text-[#8ecae6] mb-4" />
-                      <div className="text-sm font-bold uppercase mb-1">Search Global</div>
-                      <div className="text-xs text-gray-500">Scan across all resources</div>
-                    </div>
+                    {/* ...existing code... */}
                   </div>
                 </div>
               )}
