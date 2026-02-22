@@ -245,11 +245,7 @@ export default function DashboardPage() {
   const [isGeneratingGraph, setIsGeneratingGraph] = useState(false);
   const [selectedNodeIndex, setSelectedNodeIndex] = useState<number | null>(null);
 
-  const [documents, setDocuments] = useState<Doc[]>([
-    { id: 1, name: 'Quantum_Physics_Ch4.pdf',     size: '12.4 MB', date: '2024-03-15', status: 'Analysed' },
-    { id: 2, name: 'Molecular_Biology_Final.pdf', size: '8.1 MB',  date: '2024-03-14', status: 'Analysed' },
-    { id: 3, name: 'History_WW2_Economics.pdf',   size: '15.9 MB', date: '2024-03-10', status: 'Partial'  },
-  ]);
+  const [documents, setDocuments] = useState<Doc[]>([]);
 
   const router   = useRouter();
   const supabase = createClient();
