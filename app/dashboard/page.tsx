@@ -302,7 +302,7 @@ export default function DashboardPage() {
         setSelectedNodeIndex(null);
         setMessages([{
           role: 'ai',
-          content: `Analysed "${file.name}". Extracted ${data.n} topics: ${data.labels.join(', ')}. Knowledge graph is live in the right panel.`,
+          content: `Analysed "${file.name}". Extracted ${data.n} topics: ${data.labels.join(', ')}. Knowledge graph is live in the left panel.`,
         }]);
       } else {
         setDocuments(prev => prev.map(d => d.id === newDoc.id ? { ...d, status: 'Failed' } : d));
