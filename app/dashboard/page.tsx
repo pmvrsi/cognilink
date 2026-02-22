@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import NoSSRForceGraph, { adjacencyMatrixToGraphData, type ForceGraphData } from '@/lib/NoSSRForceGraph';
 import { Flame, TrendingUp } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -739,7 +740,13 @@ export default function DashboardPage() {
                       {msg.role === 'user' ? <Terminal className="w-2.5 h-2.5" /> : <Brain className="w-2.5 h-2.5" />}
                       {msg.role === 'user' ? 'You' : 'System'}
                     </div>
-                    <p className="leading-relaxed text-gray-200">{msg.content}</p>
+                    {msg.role === 'ai' ? (
+                      <div className="leading-relaxed text-gray-200 prose prose-invert prose-sm max-w-none">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="leading-relaxed text-gray-200">{msg.content}</p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -804,7 +811,13 @@ export default function DashboardPage() {
                             {msg.role === 'user' ? <Terminal className="w-3 h-3" /> : <Brain className="w-3 h-3" />}
                             {msg.role === 'user' ? 'Local_Request' : 'System_Output'}
                           </div>
-                          <p className="text-sm leading-relaxed text-gray-200">{msg.content}</p>
+                          {msg.role === 'ai' ? (
+                            <div className="text-sm leading-relaxed text-gray-200 prose prose-invert prose-sm max-w-none">
+                              <ReactMarkdown>{msg.content}</ReactMarkdown>
+                            </div>
+                          ) : (
+                            <p className="text-sm leading-relaxed text-gray-200">{msg.content}</p>
+                          )}
                         </div>
                       </div>
                     ))}
