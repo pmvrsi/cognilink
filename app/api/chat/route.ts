@@ -42,7 +42,7 @@ Rules:
 - adjacencyMatrix[i][j] = 1 means topic i is a prerequisite for topic j.
 - adjacencyMatrix[i][j] = 0 otherwise.
 - All values in adjacencyMatrix must be 0 or 1.
-- The matrix must be strictly n×n where n = labels.length.
+- The matrix must be strictly n×n where n = labels.length. Limit n to 10-15.
 - The matrix must have no entry where both [i][j]=1 and [j][i]=1 (no cycles).
 
 Example: 4 topics A, B, C, D. A is a prerequisite of B. B is a prerequisite of C and D.

@@ -51,8 +51,17 @@ export function adjacencyMatrixToGraphData(
   return { nodes, links };
 }
 
+const MAX_LABEL_LENGTH = 22;
+
+function truncateLabel(text: string): string {
+  if (text.length <= MAX_LABEL_LENGTH) return text;
+  return text.slice(0, MAX_LABEL_LENGTH - 1) + '…';
+}
+
 export default function NoSSRForceGraph({ graphData, onNodeClick }: NoSSRForceGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fgRef = useRef<any>(null);
   const [size, setSize] = useState({ width: 800, height: 600 });
 
   // Keep graph dimensions in sync with container
@@ -71,14 +80,34 @@ export default function NoSSRForceGraph({ graphData, onNodeClick }: NoSSRForceGr
     return () => ro.disconnect();
   }, []);
 
+  // Increase repulsion & link distance so nodes spread out, then zoom-to-fit
+  useEffect(() => {
+    const fg = fgRef.current;
+    if (!fg) return;
+
+    // Stronger repulsion — pushes nodes apart (default is −30)
+    fg.d3Force('charge')?.strength(-300);
+
+    // Longer resting link distance (default ≈ 30)
+    fg.d3Force('link')?.distance(120);
+
+    // Reheat the simulation so it re-lays-out with the new forces
+    fg.d3ReheatSimulation();
+
+    // After the layout stabilises, zoom so the full graph is visible
+    const timer = setTimeout(() => fg.zoomToFit(400, 60), 1500);
+    return () => clearTimeout(timer);
+  }, [graphData]);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const nodeCanvasObject = useCallback(
     (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const r = 7;
-      const fontSize = Math.max(12 / globalScale, 4);
+      const r = 5;
+      // Fixed world-space font size — scales proportionally with zoom
+      const fontSize = 4;
       const x = node.x ?? 0;
       const y = node.y ?? 0;
-      const label = node.name ?? '';
+      const label = truncateLabel(node.name ?? '');
 
       // Circle
       ctx.beginPath();
@@ -86,35 +115,48 @@ export default function NoSSRForceGraph({ graphData, onNodeClick }: NoSSRForceGr
       ctx.fillStyle = '#219ebc';
       ctx.fill();
       ctx.strokeStyle = '#8ecae6';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      // Label below
-      ctx.font = `bold ${fontSize}px "Ubuntu Mono", monospace`;
-      ctx.fillStyle = 'rgba(255,255,255,0.9)';
-      ctx.textAlign = 'center';
-      ctx.fillText(label, x, y + r + fontSize + 2);
+      // Label below — only show when zoomed in enough to read
+      if (globalScale > 0.35) {
+        ctx.font = `${fontSize}px "Ubuntu Mono", monospace`;
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x, y + r + fontSize + 2);
+      }
     },
     [],
   );
 
+  // Handle node click: call parent callback WITHOUT pinning the node
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleNodeClick = useCallback((node: any) => {
+    // Clear any fixed position so the node doesn't freeze
+    node.fx = undefined;
+    node.fy = undefined;
+    onNodeClick?.(node.id as number);
+  }, [onNodeClick]);
+
   return (
     <div ref={containerRef} className="w-full h-full">
       <ForceGraph2D
+        ref={fgRef}
         graphData={graphData}
         width={size.width}
         height={size.height}
         backgroundColor="transparent"
         nodeColor={() => '#219ebc'}
-        nodeRelSize={7}
+        nodeRelSize={5}
         nodeLabel={(node: any) => node.name}
-        linkColor={() => 'rgba(255,255,255,0.25)'}
-        linkWidth={1.5}
-        linkDirectionalArrowLength={6}
+        linkColor={() => 'rgba(255,255,255,0.18)'}
+        linkWidth={1}
+        linkDirectionalArrowLength={5}
         linkDirectionalArrowRelPos={1}
+        cooldownTicks={100}
         nodeCanvasObject={nodeCanvasObject}
         nodeCanvasObjectMode={() => 'replace'}
-        onNodeClick={(node: any) => onNodeClick?.(node.id as number)}
+        onNodeClick={handleNodeClick}
       />
     </div>
   );

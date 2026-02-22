@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -386,10 +386,14 @@ export default function DashboardPage() {
 
   const toggleVoice = () => setIsListening(v => !v);
 
-  // Convert GraphData → ForceGraph format for the renderer
-  const forceGraph: ForceGraphData | null = graphData
-    ? adjacencyMatrixToGraphData(graphData.n, graphData.labels, graphData.adjacencyMatrix)
-    : null;
+  // Convert GraphData → ForceGraph format for the renderer (memoized so
+  // unrelated state changes like selectedNodeIndex don't recreate the object)
+  const forceGraph: ForceGraphData | null = useMemo(
+    () => graphData
+      ? adjacencyMatrixToGraphData(graphData.n, graphData.labels, graphData.adjacencyMatrix)
+      : null,
+    [graphData],
+  );
 
   // ── Render ────────────────────────────────────────────────────────────────
 
