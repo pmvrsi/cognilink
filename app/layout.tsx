@@ -79,7 +79,7 @@ export default function RootLayout({
                   <span className="text-xl font-bold tracking-tight">CogniLink</span>
                 </Link>
                 <p className="text-gray-500 uppercase text-xs font-bold leading-relaxed">
-                  [version_1.0.4] — Intelligent layer for students and researchers.
+                  Made by Paramveer, Nab, Sam and Isaac, For our Hack LDN 2026 Hackathon
                 </p>
               </div>
 
