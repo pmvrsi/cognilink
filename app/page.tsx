@@ -21,8 +21,8 @@ export default function HomePage() {
           </h1>
 
           <p className="anim-fade-up delay-300 max-w-xl mx-auto text-lg md:text-xl text-gray-400 mb-12 leading-relaxed">
-            [system_scan]: CogniLink builds a conversational knowledge graph from your resources.
-            Ask anything, summarise instantly, and learn via voice.
+            CogniLink builds a conversational knowledge graph AI assistant from your resources.
+            Ask anything, summarise instantly.
           </p>
 
           <div className="anim-fade-up delay-500 flex justify-center items-center mb-24">
