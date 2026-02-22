@@ -215,6 +215,7 @@ function StreakWidget({ userId }: { userId: string | null }) {
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [user, setUser]           = useState<User | null>(null);
   const [loading, setLoading]     = useState(true);
   const [activeDoc, setActiveDoc] = useState<Doc | null>(null);
@@ -486,12 +487,14 @@ export default function DashboardPage() {
             <div className="flex-1">
               <div className="text-sm font-bold truncate">{user?.email?.split('@')[0] || 'User'}</div>
             </div>
-            <Settings className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white" />
+            <Settings className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white" onClick={() => setSettingsOpen(true)} />
           </div>
           <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold text-red-400/70 hover:text-red-400 transition-colors">
             <LogOut className="w-3 h-3" /> LOG OUT
           </button>
         </div>
+        {/* Settings menu modal */}
+        <SettingsMenu open={settingsOpen} onClose={() => setSettingsOpen(false)} user={user} onLogout={handleLogout} />
       </aside>
 
       {/* ── After graph is generated: graph takes main area, chat collapses to right panel ── */}
@@ -804,6 +807,52 @@ export default function DashboardPage() {
         </>
       )}
 
+    </div>
+  );
+}
+
+// Settings menu modal
+function SettingsMenu({ open, onClose, user, onLogout }: { open: boolean; onClose: () => void; user: User | null; onLogout: () => void }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#023047]/80 backdrop-blur-sm">
+      <div className="bg-[#023047] border border-[#219ebc]/20 rounded-3xl p-8 w-[400px] shadow-2xl shadow-[#219ebc]/10">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 bg-[#219ebc]/20 rounded-xl flex items-center justify-center border border-[#219ebc]/30">
+            <MoreVertical className="w-6 h-6 text-[#8ecae6]" />
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-lg">Settings</h3>
+            <p className="text-[#8ecae6]/60 text-sm">Manage your preferences</p>
+          </div>
+        </div>
+        <div className="space-y-6">
+          <div className="flex items-center gap-3">
+            <span className="text-white font-medium">Dark Mode</span>
+            <button className="ml-auto bg-[#219ebc]/20 rounded-full w-10 h-6 flex items-center" onClick={onClose}>
+              <span className="bg-white w-5 h-5 rounded-full ml-1" />
+            </button>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-white font-medium">Notifications</span>
+            <button className="ml-auto bg-[#219ebc]/20 rounded-full w-10 h-6 flex items-center" onClick={onClose}>
+              <span className="bg-white w-5 h-5 rounded-full ml-1" />
+            </button>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-white font-medium">Show Streak</span>
+            <button className="ml-auto bg-[#219ebc]/20 rounded-full w-10 h-6 flex items-center" onClick={onClose}>
+              <span className="bg-white w-5 h-5 rounded-full ml-1" />
+            </button>
+          </div>
+        </div>
+        <button onClick={onLogout} className="mt-8 w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold text-red-400/70 hover:text-red-400 transition-colors">
+          <LogOut className="w-3 h-3" /> Log Out
+        </button>
+        <button onClick={onClose} className="mt-4 w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold text-[#219ebc]/70 hover:text-[#8ecae6] transition-colors">
+          Close
+        </button>
+      </div>
     </div>
   );
 }
