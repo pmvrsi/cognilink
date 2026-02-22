@@ -246,6 +246,7 @@ export default function DashboardPage() {
   const [selectedNodeIndex, setSelectedNodeIndex] = useState<number | null>(null);
   const [isSharing, setIsSharing]                 = useState(false);
   const [shareCopied, setShareCopied]             = useState(false);
+  const [shareUrl, setShareUrl]                   = useState<string | null>(null);
 
   const [documents, setDocuments] = useState<Doc[]>([]);
 
@@ -364,9 +365,9 @@ export default function DashboardPage() {
     setIsSharing(true);
     try {
       const username =
-        user?.user_metadata?.full_name  ||
-        user?.user_metadata?.name       ||
-        user?.email?.split('@')[0]      ||
+        user?.user_metadata?.full_name ||
+        user?.user_metadata?.name      ||
+        user?.email?.split('@')[0]     ||
         'Anonymous';
 
       const { data, error } = await supabase
@@ -378,12 +379,18 @@ export default function DashboardPage() {
         .select('id')
         .single();
 
-      if (error || !data) throw error;
+      if (error || !data) throw new Error(error?.message ?? 'Insert failed');
 
-      const url = `https://cognilink.vercel.app/publicgraph/${data.id}`;
-      await navigator.clipboard.writeText(url);
-      setShareCopied(true);
-      setTimeout(() => setShareCopied(false), 2500);
+      const url = `${window.location.origin}/publicgraph/${data.id}`;
+      setShareUrl(url);
+
+      try {
+        await navigator.clipboard.writeText(url);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2500);
+      } catch {
+        // clipboard blocked — URL is still shown in the UI
+      }
     } catch (err) {
       console.error('Share error:', err);
     } finally {
@@ -647,6 +654,17 @@ export default function DashboardPage() {
                   : <><Share2 className="w-3 h-3" /> Share Graph</>
                 }
               </button>
+              {shareUrl && (
+                <div className="mt-2 flex items-center gap-1 bg-black/30 border border-white/10 rounded-lg px-2 py-1.5">
+                  <span className="flex-1 text-[10px] text-white/50 truncate font-mono">{shareUrl}</span>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(shareUrl).then(() => { setShareCopied(true); setTimeout(() => setShareCopied(false), 2500); })}
+                    className="text-[#219ebc] hover:text-[#8ecae6] text-[10px] font-bold shrink-0"
+                  >
+                    Copy
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Messages */}
@@ -866,6 +884,17 @@ export default function DashboardPage() {
                     : <><Share2 className="w-3 h-3" /> Share Graph</>
                   }
                 </button>
+                {shareUrl && (
+                  <div className="mt-2 flex items-center gap-1 bg-black/30 border border-white/10 rounded-lg px-2 py-1.5">
+                    <span className="flex-1 text-[10px] text-white/50 truncate font-mono">{shareUrl}</span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(shareUrl).then(() => { setShareCopied(true); setTimeout(() => setShareCopied(false), 2500); })}
+                      className="text-[#219ebc] hover:text-[#8ecae6] text-[10px] font-bold shrink-0"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </aside>
