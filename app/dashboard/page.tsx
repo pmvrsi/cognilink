@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import NoSSRForceGraph, { adjacencyMatrixToGraphData, type ForceGraphData } from '@/lib/NoSSRForceGraph';
-import { Flame, Zap, TrendingUp } from 'lucide-react';
+import { Flame, TrendingUp } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -161,7 +161,7 @@ function StreakWidget({ userId }: { userId: string | null }) {
     <div className="bg-[#023047] border border-[#219ebc]/20 rounded-2xl p-6 w-full shadow-lg shadow-[#219ebc]/10 mb-6">
       <div className="flex items-center gap-4 mb-4">
         <div className="w-10 h-10 bg-[#219ebc]/20 rounded-xl flex items-center justify-center border border-[#219ebc]/30">
-          <Flame className="w-5 h-5 text-[#8ecae6]" />
+          <Flame className="w-5 h-5 text-orange-500" />
         </div>
         <div>
           <h3 className="text-white font-bold text-base">Login Streak</h3>
@@ -171,11 +171,6 @@ function StreakWidget({ userId }: { userId: string | null }) {
       <div className="flex items-end gap-2 mb-4">
         <span className="text-4xl font-bold text-white tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontVariantNumeric: 'tabular-nums' }}>{streakData.currentStreak}</span>
         <span className="text-[#8ecae6]/80 text-base font-medium pb-2">days</span>
-        {streakData.currentStreak > 0 && (
-          <div className="w-8 h-8 bg-[#219ebc]/20 rounded-xl flex items-center justify-center animate-pulse ml-auto">
-            <Zap className="w-4 h-4 text-[#8ecae6]" />
-          </div>
-        )}
       </div>
       <div className="mb-4">
         <p className="text-gray-400 text-xs uppercase tracking-widest mb-2">Last 7 Days</p>
@@ -192,7 +187,7 @@ function StreakWidget({ userId }: { userId: string | null }) {
                       : 'bg-white/5 border border-white/10 hover:border-white/20'
                   } ${isToday ? 'ring-2 ring-[#8ecae6]/30 ring-offset-2 ring-offset-[#023047]' : ''}`}
                 >
-                  {isActive && <Flame className="w-4 h-4 text-[#8ecae6]" />}
+                  {isActive && <Flame className="w-4 h-4 text-orange-500" />}
                 </div>
                 <span className={`text-xs font-medium ${isToday ? 'text-[#8ecae6]' : 'text-gray-400'}`}>{day.fullLabel}</span>
               </div>
@@ -203,7 +198,7 @@ function StreakWidget({ userId }: { userId: string | null }) {
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-white/5 rounded-xl p-2 border border-white/10">
           <div className="flex items-center gap-1 mb-1">
-            <Flame className="w-3 h-3 text-[#8ecae6]/60" />
+            <Flame className="w-3 h-3 text-orange-500/70" />
             <p className="text-gray-400 text-xs uppercase tracking-wide">Current</p>
           </div>
           <p className="text-white font-bold text-lg" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>{streakData.currentStreak} <span className="text-gray-400 text-xs font-normal">days</span></p>
