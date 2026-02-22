@@ -55,7 +55,7 @@ export default function RootLayout({
                 <div className="flex items-center gap-4">
                   <Link
                     href="/login"
-                    className="text-sm font-bold px-5 py-2 rounded-full border border-white/20 text-gray-300 hover:text-white hover:border-white/50 hover:bg-white/5 transition-all hidden sm:block"
+                    className="text-sm font-bold px-6 py-2.5 rounded-full bg-[#8ecae6] text-[#023047] hover:bg-white transition-all hidden sm:block"
                   >
                     Log in
                   </Link>
@@ -71,34 +71,14 @@ export default function RootLayout({
         {/* Footer - only show on public pages */}
         {!hideChrome && (
           <footer className="py-20 px-6 border-t border-white/5">
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
-              <div>
-                <Link href="/" className="flex items-center gap-3 mb-6">
-                  <Image src="/MainLogo.png" alt="CogniLink" width={48} height={48} className="drop-shadow-lg" />
-                  <span className="text-xl font-bold tracking-tight">CogniLink</span>
-                </Link>
-                <p className="text-gray-500 max-w-xs uppercase text-xs font-bold leading-relaxed">
-                  [version_1.0.4] <br />
-                  Intelligent layer for students and researchers.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-20">
-                <div className="space-y-4">
-                  <h6 className="text-xs font-bold uppercase tracking-widest text-white/50">Support</h6>
-                  <ul className="space-y-2 text-sm text-gray-400 font-bold uppercase">
-                    <li><a href="#" className="hover:text-white transition">Docs</a></li>
-                    <li><a href="#" className="hover:text-white transition">Privacy</a></li>
-                  </ul>
-                </div>
-                <div className="space-y-4">
-                  <h6 className="text-xs font-bold uppercase tracking-widest text-white/50">Social</h6>
-                  <ul className="space-y-2 text-sm text-gray-400 font-bold uppercase">
-                    <li><a href="#" className="hover:text-white transition">Twitter</a></li>
-                    <li><a href="#" className="hover:text-white transition">GitHub</a></li>
-                  </ul>
-                </div>
-              </div>
+            <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-6">
+              <Link href="/" className="flex items-center gap-3">
+                <Image src="/MainLogo.png" alt="CogniLink" width={40} height={40} className="drop-shadow-lg" />
+                <span className="text-xl font-bold tracking-tight">CogniLink</span>
+              </Link>
+              <p className="text-gray-500 uppercase text-xs font-bold leading-relaxed">
+                [version_1.0.4] — Intelligent layer for students and researchers.
+              </p>
             </div>
 
             <div className="max-w-6xl mx-auto mt-20 pt-8 border-t border-white/5 text-center text-gray-600 text-[10px] font-bold tracking-widest">
